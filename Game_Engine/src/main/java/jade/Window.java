@@ -18,9 +18,12 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window {
     private final int width, height;
     private final String title;
-    public static Window window = null;
+
     private long glfwWindow;
-    private float r,g,b,a;
+    public float r,g,b,a;
+
+    public static Window window = null;
+    public static Scene currentScene;
     private Window(){
         this.width = 1920;
         this.height = 1080;
@@ -29,6 +32,19 @@ public class Window {
         g = 1;
         b = 1;
         a = 1;
+    }
+    public static void changeScene(int newScene){
+        switch (newScene) {
+            case 0 -> currentScene = new LevelEditorScene();
+
+            // currentScene.init()
+            case 1 -> currentScene = new LevelScene();
+
+            // currentScene.init()
+            default -> {
+                assert false : "Unknown scene '" + newScene + "'";
+            }
+        }
     }
 
     public static Window get(){
@@ -88,22 +104,27 @@ public class Window {
         glfwShowWindow(glfwWindow);
 
         GL.createCapabilities();
+        Window.changeScene(0);
 
     }
     public void loop(){
         float beginTime = Time.getTime();
-        float endTime = Time.getTime();
-
+        float endTime;
+        float dt = -1.0f;
         while(!glfwWindowShouldClose(glfwWindow)){
             // Poll events
             glfwPollEvents();
             glClearColor(r,g,b,a);
             glClear(GL_COLOR_BUFFER_BIT);
+            if(dt >=0) {
+                currentScene.update(dt);
+            }
             glfwSwapBuffers(glfwWindow);
+            endTime = Time.getTime();
+            dt = endTime-beginTime;
+            beginTime = endTime;
         }
-        endTime = Time.getTime();
-        float dt = endTime-beginTime;
-        beginTime = endTime;
+
     }
 
 
