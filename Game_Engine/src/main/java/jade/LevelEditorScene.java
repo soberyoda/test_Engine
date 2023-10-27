@@ -3,7 +3,7 @@ package jade;
 import static org.lwjgl.opengl.GL20.*;
 
 public class LevelEditorScene extends Scene {
-    private String vertexShaderSource = """
+    private final String vertexShaderSource = """
             #version 330 core
             layout (location=0) in vec3 aPos;
             layout (location=1) in vec4 aColor;
@@ -13,15 +13,6 @@ public class LevelEditorScene extends Scene {
             void main(){
                 fColor = aColor;
                 gl_Position = vec4(aPos, 1.0);
-            }""";
-    private String fragmentShaderSource = """
-            #version 330 core
-
-            in vec4 fColor;
-            out vec4 color;
-
-            void main(){
-                fColor = color;
             }""";
 
     private int vertexID, fragmentID, shaderProgram;
@@ -34,6 +25,15 @@ public class LevelEditorScene extends Scene {
         vertexID = glCreateShader(GL_VERTEX_SHADER);
         fragmentID = glCreateShader(GL_VERTEX_SHADER);
         // pass the shader source to the GPU
+        String fragmentShaderSource = """
+                #version 330 core
+
+                in vec4 fColor;
+                out vec4 color;
+
+                void main(){
+                    fColor = color;
+                }""";
         glShaderSource(vertexID, fragmentShaderSource);
         glCompileShader(vertexID);
 
@@ -55,6 +55,8 @@ public class LevelEditorScene extends Scene {
             assert false: "";
         }
         // link shaders and check for errors
+
+
 
     }
 
